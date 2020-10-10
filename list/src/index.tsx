@@ -4,11 +4,13 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom'
+import CurrenciesService from './components/services/CurrenciesService';
+import PaginationService from './components/services/PaginationService';
 
 ReactDOM.render(
   <Router>
     <React.StrictMode>
-      <App />
+    <CurrenciesService render={props => <PaginationService {...props} render={(props) => <App {...props} />} />} />
     </React.StrictMode>
   </Router>,
   document.getElementById('root')

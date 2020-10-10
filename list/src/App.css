@@ -69,6 +69,10 @@ html, body,#root{
   background-color: #E0E0E0;
 }
 
+.button:focus {
+  outline: none;
+}
+
 .pagination-box {
   width: 100%;
   display: flex;

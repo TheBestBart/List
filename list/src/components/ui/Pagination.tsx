@@ -5,7 +5,7 @@ import Container from "./Container";
 
 export interface PaginationProps {
 	pageCount: number;
-	onPageChange: () => void;
+	onPageChange: (number: number) => void;
 	pageRangeDisplayed: number;
 	marginPagesDisplayed: number;
 	initialPage: number;
@@ -45,7 +45,7 @@ const EdgeElement: React.FC<EdgeElementProps> = ({
 };
 
 const Pagination: React.FC<PaginationProps> = props => {
-	let { initialPage, pageCount } = props;
+	let { initialPage, pageCount, onPageChange } = props;
 	let nextLabel = (
 		<div className="pagination-single">
 			<EdgeElement
@@ -68,6 +68,7 @@ const Pagination: React.FC<PaginationProps> = props => {
 		<Container>
 			<ReactPaginate
 				{...props}
+				onPageChange={(({ selected }) => onPageChange(selected + 1))}
 				breakLabel={breakLabel}
 				activeLinkClassName={"pagination-active-class-link"}
 				containerClassName={"pagination-pages-box"}
