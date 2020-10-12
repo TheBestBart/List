@@ -1,8 +1,9 @@
 import { Currency } from "../services/CurrenciesService";
 import React from "react";
 import ListElement from "./ListElement";
+import { withRouter, RouteComponentProps } from "react-router";
 
-export interface ListProps {
+export interface ListProps extends RouteComponentProps<any>{
     currencies?: Currency[]
 }
  
@@ -24,4 +25,4 @@ const List: React.SFC<ListProps> = ({ currencies = [] }) => {
     );
 }
  
-export default List ;
+export default withRouter(List) ;

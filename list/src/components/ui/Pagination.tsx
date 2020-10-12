@@ -1,14 +1,42 @@
 import React, { ReactNode } from "react";
-import ReactPaginate from "react-paginate";
 import { Arrow } from "./svg";
 import Container from "./Container";
+import { ReturnedData } from "../services/PaginationService";
 
-export interface PaginationProps {
-	pageCount: number;
-	onPageChange: (number: number) => void;
-	pageRangeDisplayed: number;
-	marginPagesDisplayed: number;
-	initialPage: number;
+const Pagination: React.FC<ReturnedData> = ({ activePage, quantityOfPages, decrementPage, handleClick, incrementPage }) => {
+
+	return (
+		<Container>
+			<Container handleClick={decrementPage} className={'pagination-single'}>
+				<EdgeElement
+					activeNumber={activePage}
+					max={quantityOfPages}
+					isFirst
+				/>
+			</Container>
+			{
+				createPages(quantityOfPages, activePage, handleClick)
+			}
+			<Container handleClick={incrementPage} className={'pagination-single'}>
+				<EdgeElement activeNumber={activePage} max={quantityOfPages} rotationDegree={180}/>
+			</Container>
+		</Container>
+	);
+};
+
+
+const createPages = (quantityOfPages: number, activePage: number, action: (number: number) => void): ReactNode[] => {
+	let pages: ReactNode[] = [];
+
+	for(let i: number = 1; i <= quantityOfPages; i++) {
+		let page = <Container key={i}className={ i === activePage ? 'pagination-active-class-link' : 'pagination-single'} handleClick={() => action(i)}>
+			{i}
+		</Container>
+
+		pages.push(page);
+	}
+
+	return pages
 }
 
 export interface EdgeElementProps {
@@ -18,23 +46,13 @@ export interface EdgeElementProps {
 	isFirst?: boolean;
 }
 
-const Ellipsis: React.FC = () => {
-	return (
-		<>
-			<div className="ui-fadvs-pag-elipsis" />
-			<div className="ui-fadvs-pag-elipsis" />
-			<div className="ui-fadvs-pag-elipsis" />
-		</>
-	);
-};
-
 const EdgeElement: React.FC<EdgeElementProps> = ({
 	activeNumber,
 	max,
 	rotationDegree = 0,
 	isFirst = true
 }) => {
-	let condition: boolean = isFirst ? activeNumber < max - 1 : activeNumber > 0;
+	let condition: boolean = isFirst ? activeNumber < max  : activeNumber > 0;
 
 	return (
 		<Arrow
@@ -44,42 +62,5 @@ const EdgeElement: React.FC<EdgeElementProps> = ({
 	);
 };
 
-const Pagination: React.FC<PaginationProps> = props => {
-	let { initialPage, pageCount, onPageChange } = props;
-	let nextLabel = (
-		<div className="pagination-single">
-			<EdgeElement
-				activeNumber={initialPage}
-				max={pageCount}
-				rotationDegree={180}
-				isFirst
-			/>
-		</div>
-	);
-	let previousLabel = (
-		<div className="pagination-single">
-			<EdgeElement activeNumber={initialPage} max={pageCount} />
-		</div>
-	);
 
-	let breakLabel = <Ellipsis />
-
-	return (
-		<Container>
-			<ReactPaginate
-				{...props}
-				onPageChange={(({ selected }) => onPageChange(selected + 1))}
-				breakLabel={breakLabel}
-				activeLinkClassName={"pagination-active-class-link"}
-				containerClassName={"pagination-pages-box"}
-				nextLabel={nextLabel}
-				previousLabel={previousLabel}
-				pageLinkClassName={"pagination-single"}
-				nextLinkClassName={"pagination-edge-link"}
-				previousLinkClassName={"pagination-edge-link"}
-			/>
-		</Container>
-	);
-};
-
-export { Pagination, Ellipsis, EdgeElement };
+export default Pagination;

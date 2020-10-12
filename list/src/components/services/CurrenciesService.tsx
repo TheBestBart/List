@@ -1,17 +1,15 @@
-import { useState, Dispatch, SetStateAction, useEffect, SyntheticEvent, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { CURRENCIES_URL } from "../../common/URL";
 
 export interface CurrenciesData {
     currencies: Array<Currency>,
-    filterCurrencies: () => void
+    filterCurrencies: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
-
 export interface Currency {
     currency: string,
     code: string,
     mid: number
 }
-
 
 interface CurrenciesServiceProps {
     render: (data: CurrenciesData) => JSX.Element | null
@@ -34,14 +32,11 @@ const CurrenciesService: React.FC<CurrenciesServiceProps> = ({ render }) => {
 
     const filterCurrencies = (event: React.ChangeEvent<HTMLInputElement>) => {
         let { value } = event.target;
-
         let filteredCurrencies: Currency[] = currencies.filter(currency => currency.currency.includes(value));
         setFilteredCurrencies(filteredCurrencies);
     } 
-
-    const handleChange:any = useCallback((event: React.ChangeEvent<HTMLInputElement>) => filterCurrencies(event), [])
- 
-    return render({ currencies: filteredCurrencies, filterCurrencies: handleChange });
+    
+    return render({ currencies: filteredCurrencies, filterCurrencies: filterCurrencies });
 }
  
 export default CurrenciesService;

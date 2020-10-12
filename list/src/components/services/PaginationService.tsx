@@ -1,91 +1,105 @@
-import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { CurrenciesData, Currency } from './CurrenciesService';
-import { url } from '../../common/URL';
+import { Currency } from "./CurrenciesService";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { RouteInfo } from "../../common/Interfaces";
+import { url } from "../../common/URL";
 
-
-export interface PaginationServiceData extends CurrenciesData, State {
-    setPage: (pageNumber?: number) => void
+interface PaginationServiceProps extends RouteComponentProps<RouteInfo> {
+    currencies: Currency[],
+    render: (data: ReturnedData) => JSX.Element
 }
 
-interface RouteInfo {
-    pageNumber: string;
-}
-
-export interface PaginationServiceProps extends RouteComponentProps<RouteInfo>, CurrenciesData {
-    render: (data: PaginationServiceData) => JSX.Element | null
-}
-
-interface State {
+interface ReturnedState {
     activePage: number,
-    quantityElementsOnPage: number,
-    quantityOfPages: number
+    quantityOfPages: number,
 }
 
-class PaginationService extends React.Component<PaginationServiceProps, State> {
+interface State extends ReturnedState {
+    quantityElementsOnPage: number,
+}
 
-    constructor(props: PaginationServiceProps) {
-        super(props)
+export interface ReturnedData extends ReturnedState {
+    decrementPage: () => void,
+    incrementPage: () => void,
+    handleClick: (page: number) => void,
+    currencies: Currency[],
+    pageNumber: number | undefined
+}
 
-        this.state = {
-            activePage: 0,
-            quantityElementsOnPage: 5,
-            quantityOfPages: 1,
+const PaginationService: React.FC<PaginationServiceProps> = ({ currencies, render, match, history }) => {
+
+    const pageNumber = parseInt(match.params.pageNumber, 10);
+
+    const initialState: State = {
+        quantityElementsOnPage: 5,
+        quantityOfPages: currencies.length % 5 > 0
+            ? currencies.length / 5 + 1
+            : currencies.length / 5,
+        activePage: 1
+    }
+
+    const [state, setState] = useState<State>({ ...initialState });
+
+    const getPartOfCurrencies = (): Currency[] => {
+        let { quantityOfPages } = state;
+
+        if (currencies.length && pageNumber && pageNumber >= 1 && pageNumber <= quantityOfPages) {
+            let { quantityElementsOnPage } = state;
+            let page: number = pageNumber;
+            let start: number = 0 + (quantityElementsOnPage * (page - 1));
+            let end: number = 0 + (quantityElementsOnPage * page)
+            let array = currencies.slice(start, end);
+
+            return array;
+        }
+
+        return [];
+    }
+
+    const handleClick = (number: number): void => history.push(url.CURRENCIES + number);
+
+    const decrementPage = () => {
+        if (pageNumber > 1) {
+            history.push(url.CURRENCIES + (pageNumber - 1))
         }
     }
 
-    componentDidMount() {
-        let { currencies, match } = this.props;
-        let { quantityElementsOnPage } = this.state;
+    const incrementPage = () => {
+        if (pageNumber < state.quantityOfPages) {
+            history.push(url.CURRENCIES + (pageNumber + 1))
+        }
+    }
 
-        console.log('tutaj', match.params)
+    useEffect(() => {
+        let { quantityElementsOnPage, quantityOfPages } = state;
 
-        this.setState({
-            quantityOfPages: currencies.length % quantityElementsOnPage > 0 ? currencies.length / quantityElementsOnPage + 1 : currencies.length / quantityElementsOnPage,
-            activePage: 1
+        console.log('tutaj działam')
+        setState({
+            ...state,
+            quantityOfPages: currencies.length % quantityElementsOnPage > 0
+                ? currencies.length / quantityElementsOnPage + 1
+                : currencies.length / quantityElementsOnPage
+        });
+        (pageNumber && pageNumber >= 1 && pageNumber <= quantityOfPages) && history.push(url.CURRENCIES + '1')
+    }, [currencies.length])
+
+    useEffect(() => {
+        console.log('teraz tutaj jestem')
+        setState({
+            ...state,
+            activePage: pageNumber,
         })
-    }
+    }, [pageNumber])
 
-    componentDidUpdate(prevProps: PaginationServiceProps, presState: State) {
-        console.log(this.props.match.params)
-        if(prevProps.currencies !== this.props.currencies) {
-            let { currencies, match } = this.props;
-            let { quantityElementsOnPage } = this.state;
-
-            this.setState({
-                quantityOfPages: currencies.length % quantityElementsOnPage > 0 ? currencies.length / quantityElementsOnPage + 1 : currencies.length / quantityElementsOnPage,
-                activePage: 1
-            })
-        }
-    }
-
-    setPage = (number?: number) => {
-        let { match, history } = this.props;
-        // let  pageNumber = match.params.pageNumber;
-
-        // console.log(number);
-
-        // let numberToUrl:number = number ? number : parseInt(pageNumber);
-
-        console.log('NUMBERtOURL ', number)
-
-        history.push(url.CURRENCIES + number)
-    }
-
-    getPartOfCurrencies = (): Currency[] => {
-        let { currencies } = this.props; 
-        let { activePage, quantityElementsOnPage } = this.state;
-        let start: number;
-        let end:  number;
-
-        return currencies.slice(0, 5) 
-    } 
-
-    render() {
-        let { render, filterCurrencies } = this.props;
-
-        return render({ filterCurrencies, currencies: this.getPartOfCurrencies(), setPage: this.setPage, ...this.state });
-    }
+    return render({
+        activePage: state.activePage,
+        currencies: getPartOfCurrencies(),
+        quantityOfPages: state.quantityOfPages === 0 ? 1 : state.quantityOfPages,
+        decrementPage,
+        incrementPage,
+        handleClick,
+        pageNumber: pageNumber ? pageNumber : undefined
+    });
 }
 
 export default withRouter(PaginationService);
