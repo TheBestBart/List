@@ -5,4 +5,4 @@ export const url = {
     SOMETHIG_WENT_WRONG: '/something-wrong/',
 }
 
-export const CURRENCIES_URL = 'http://api.nbp.pl/api/exchangerates/tables/A/';
+export const CURRENCIES_URL = 'https://api.nbp.pl/api/exchangerates/tables/A/';

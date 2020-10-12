@@ -14,7 +14,8 @@ const Navbar: React.FC<NavbarProps> = ({
     history,
     handleChange,
     toggleClick,
-    isOpen
+    isOpen,
+    location
 }) => {
     const redirect = (path: LocationDescriptor<unknown>): void => {
         history.push(path);
@@ -39,6 +40,9 @@ const Navbar: React.FC<NavbarProps> = ({
                         className="search-input"
                         type="text"
                         placeholder={texts.navbarInputPlaceholder}
+                        style={{
+                            display: location.pathname.includes(url.ABOUT_US) ? 'none' : 'block' 
+                        }}
                     />
                     <button
                         onClick={() => redirect(url.CURRENCIES + "1")}
