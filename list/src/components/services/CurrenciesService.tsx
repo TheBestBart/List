@@ -1,42 +1,59 @@
 import { useState, useEffect } from "react";
 import { CURRENCIES_URL } from "../../common/URL";
+import { withRouter, RouteComponentProps } from "react-router";
+import { texts } from "../../common/texts";
 
 export interface CurrenciesData {
-    currencies: Array<Currency>,
-    filterCurrencies: (event: React.ChangeEvent<HTMLInputElement>) => void
+    currencies: Array<Currency>;
+    filterCurrencies: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    isError: boolean;
 }
+
 export interface Currency {
-    currency: string,
-    code: string,
-    mid: number
+    currency: string;
+    code: string;
+    mid: number;
 }
 
 interface CurrenciesServiceProps {
-    render: (data: CurrenciesData) => JSX.Element | null
+    render: (data: CurrenciesData) => JSX.Element | null;
 }
 
 const CurrenciesService: React.FC<CurrenciesServiceProps> = ({ render }) => {
     const [currencies, setCurrencies] = useState<Currency[]>([]);
-    const [filteredCurrencies, setFilteredCurrencies] = useState<Currency[]>(currencies)
-    
+    const [filteredCurrencies, setFilteredCurrencies] = useState<Currency[]>(
+        currencies
+    );
+    const [error, setError] = useState<boolean>(false);
     const uploadData = async (): Promise<void> => {
-        const response = await fetch(CURRENCIES_URL);
-        const json = await response.json();
-        setCurrencies(json[0].rates);
-        setFilteredCurrencies(json[0].rates);
-    }
+        try {
+            const response = await fetch(CURRENCIES_URL);
+            const json = await response.json();
+            setCurrencies(json[0].rates);
+            setFilteredCurrencies(json[0].rates);
+        } catch (error) {
+            console.log(error);
+            setError(true);
+        }
+    };
 
     useEffect(() => {
         uploadData();
-    }, [])
+    }, []);
 
     const filterCurrencies = (event: React.ChangeEvent<HTMLInputElement>) => {
         let { value } = event.target;
-        let filteredCurrencies: Currency[] = currencies.filter(currency => currency.currency.includes(value));
+        let filteredCurrencies: Currency[] = currencies.filter(currency =>
+            currency.currency.toUpperCase().includes(value.toUpperCase())
+        );
         setFilteredCurrencies(filteredCurrencies);
-    } 
-    
-    return render({ currencies: filteredCurrencies, filterCurrencies: filterCurrencies });
-}
- 
+    };
+
+    return render({
+        isError: error,
+        currencies: filteredCurrencies,
+        filterCurrencies: filterCurrencies
+    });
+};
+
 export default CurrenciesService;

@@ -10,7 +10,9 @@ import PaginationService from './components/services/PaginationServiceClass';
 
 ReactDOM.render(
   <Router>
-    <CurrenciesService render={props => <App {...props} />} />
+    <React.StrictMode>
+      <CurrenciesService render={props => <App {...props} />} />
+    </React.StrictMode>
   </Router>,
   document.getElementById('root')
 );

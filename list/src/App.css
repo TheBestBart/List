@@ -5,7 +5,7 @@ html, body,#root{
   min-height: 100%;
   text-align: center;
   align-items: center;
-  background-color: #fafafa;
+  background-color: #eeeddd;
   display: flex;
   flex-direction: column
 }
@@ -16,6 +16,12 @@ html, body,#root{
   flex-direction: column;
   width: 90%;
   justify-content: center
+}
+
+.title-text {
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .nav-element-box {
@@ -49,6 +55,8 @@ html, body,#root{
   outline: none;
   cursor: pointer;
   background-color: white;
+
+  box-shadow: 0px 1px 6px #00000050;
 }
 
 .button {
@@ -58,7 +66,7 @@ html, body,#root{
   min-width: 150px;
   padding: 0 10px;
   margin-right: 20px;
-  background-color: #F0F0F0;
+  background-color: darkgray;
   transition: background-color 0.2s linear;
   color: #262626;
   cursor: pointer;
@@ -79,8 +87,8 @@ html, body,#root{
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  background-color: #ffffff;
-  box-shadow: 0px 1px 6px #00000029;
+  background-color: lightsteelblue;
+  box-shadow: 0px 1px 6px #00000050;
   transition:  background-color 0.2s linear;
   height: 50px;
   margin-bottom: 10px;
@@ -96,7 +104,7 @@ html, body,#root{
   font-size: 27px;
   font-weight: 600;
   background-color: #ffffff;
-  box-shadow: 0px 1px 6px #00000029;
+  box-shadow: 0px 1px 6px #00000050;
   transition:  background-color 0.2s linear;
   height: 50px!important;
   margin-bottom: 10px;
@@ -114,7 +122,7 @@ html, body,#root{
 }
 
 .pagination-active-class-link {
-  background-color: #E52727!important;
+  background-color: lightslategray!important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -145,12 +153,40 @@ html, body,#root{
   cursor: pointer
 }
 
+.pagination-single {
+  background-color: #F0F0F0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 25px;
+  padding: 0 3px;
+  height: 30px;
+  color: #262626;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 2px;
+  margin-right: 7px;
+  cursor: pointer;
+  transition: background-color 0.3s linear
+}
+
+.pagination-single:hover {
+  background-color: lightgray;
+}
+
 .pagination-single:focus {
  outline: none!important
 }
 
 .pagination-edge-link:focus {
   outline: none;
+}
+
+.pagination-single-text {
+  justify-content: space-around;
+  font-size: 20px;
+  font-weight: 600;
+  color: #262626
 }
 
 .prev-a {
@@ -165,11 +201,77 @@ html, body,#root{
   fill: #a3a3a3;
 }
 
-@keyframes App-logo-spin {
+.hamburger-menu {
+  display: none;
+}
+
+.navbar-elements {
+  display: flex;
+}
+
+.phone-hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+
+@media screen and (max-width: 700px) {
+  html, body,#root{
+    background-color: #464646;
+  }
+
+  .hamburger-menu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box
+  }
+
+  .navbar-elements {
+    flex-direction: column-reverse;
+    justify-content: center;
+    width: 90%;
+  }
+
+  .nav-element-box {
+    align-items: center;
+    justify-content: flex-end;
+    border-top: 1px solid #ADADAD;
+    padding: 10px 0;
+    flex-direction: column
+  }
+
+  .button {
+    min-width: 100%;
+    margin-bottom: 10px;
+    margin-right: 0px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding-left: 10px;
+    box-sizing: border-box;
+    margin-right: 10px;
+  } 
+
+  .pagination-single-text {
+    font-size: 13px;
+  }
+
+  .single-hide {
+    display: none!important;
   }
 }
