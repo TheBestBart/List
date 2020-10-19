@@ -7,7 +7,7 @@ export interface ListProps extends RouteComponentProps<any> {
     currencies?: Currency[];
 }
 
-const List: React.SFC<ListProps> = ({ currencies = [] }) => {
+const List: React.FC<ListProps> = ({ currencies = [] }) => {
     return (
         <React.Fragment>
             {currencies.map(({ currency, code, mid }, index) => {

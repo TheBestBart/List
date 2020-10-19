@@ -8,7 +8,7 @@ export interface TitleProps {
     filterCurrencies: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Title: React.SFC<TitleProps> = props => {
+const Title: React.FC<TitleProps> = props => {
     return (
         <Container
             styles={{

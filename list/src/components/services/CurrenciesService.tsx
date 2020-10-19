@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { CURRENCIES_URL } from "../../common/URL";
-import { withRouter, RouteComponentProps } from "react-router";
-import { texts } from "../../common/texts";
 
 export interface CurrenciesData {
     currencies: Array<Currency>;
@@ -20,6 +18,7 @@ interface CurrenciesServiceProps {
 }
 
 const CurrenciesService: React.FC<CurrenciesServiceProps> = ({ render }) => {
+    console.log('wypełniam sie in currencies Service')
     const [currencies, setCurrencies] = useState<Currency[]>([]);
     const [filteredCurrencies, setFilteredCurrencies] = useState<Currency[]>(
         currencies
@@ -41,13 +40,14 @@ const CurrenciesService: React.FC<CurrenciesServiceProps> = ({ render }) => {
         uploadData();
     }, []);
 
-    const filterCurrencies = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const filterCurrencies = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         let { value } = event.target;
+        console.log('wypelniam się')
         let filteredCurrencies: Currency[] = currencies.filter(currency =>
             currency.currency.toUpperCase().includes(value.toUpperCase())
         );
         setFilteredCurrencies(filteredCurrencies);
-    };
+    }, [setFilteredCurrencies, currencies]);
 
     return render({
         isError: error,
@@ -56,4 +56,4 @@ const CurrenciesService: React.FC<CurrenciesServiceProps> = ({ render }) => {
     });
 };
 
-export default CurrenciesService;
+export default memo(CurrenciesService);

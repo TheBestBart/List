@@ -6,7 +6,7 @@ const getWidth = (): number =>
     document.body.clientWidth;
 
 const useWindowWitdh = (): number => {
-    let [width, setWidth] = useState<number>(getWidth());
+    const [width, setWidth] = useState<number>(getWidth());
 
     useEffect(() => {
         const resizeListener = () => {
@@ -18,7 +18,7 @@ const useWindowWitdh = (): number => {
         return () => {
             window.removeEventListener("resize", resizeListener);
         };
-    }, []);
+    }, [width]);
 
     return width;
 };

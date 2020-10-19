@@ -1,10 +1,10 @@
 import { Currency } from "./CurrenciesService";
-import { RouteComponentProps, withRouter } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useRouteMatch, useHistory } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
 import { RouteInfo } from "../../common/Interfaces";
 import { url } from "../../common/URL";
 
-interface PaginationServiceProps extends RouteComponentProps<RouteInfo> {
+interface PaginationServiceProps {
     currencies: Currency[];
     render: (data: ReturnedData) => JSX.Element;
 }
@@ -29,11 +29,10 @@ export interface ReturnedData extends ReturnedState {
 const PaginationService: React.FC<PaginationServiceProps> = ({
     currencies,
     render,
-    match,
-    history
 }) => {
+    const match = useRouteMatch<RouteInfo>();
+    const history = useHistory();
     const pageNumber = parseInt(match.params.pageNumber, 10);
-
     const initialState: State = {
         quantityElementsOnPage: 5,
         quantityOfPages:
@@ -42,19 +41,15 @@ const PaginationService: React.FC<PaginationServiceProps> = ({
                 : currencies.length / 5,
         activePage: 1
     };
-
     const [state, setState] = useState<State>({ ...initialState });
-
-    const getPartOfCurrencies = (): Currency[] => {
-        let { quantityOfPages } = state;
-
+    const { quantityOfPages, quantityElementsOnPage, activePage } = state;
+    const getPartOfCurrencies = () => {
         if (
             currencies.length &&
             pageNumber &&
             pageNumber >= 1 &&
             pageNumber <= quantityOfPages
         ) {
-            let { quantityElementsOnPage } = state;
             let page: number = pageNumber;
             let start: number = 0 + quantityElementsOnPage * (page - 1);
             let end: number = 0 + quantityElementsOnPage * page;
@@ -66,24 +61,26 @@ const PaginationService: React.FC<PaginationServiceProps> = ({
         return [];
     };
 
-    const handleClick = (number: number): void =>
-        history.push(url.CURRENCIES + number);
+    const handleClick = useCallback((number: number): void => {
+        history.push(url.CURRENCIES + number)
+    }, [history]);
 
-    const decrementPage = () => {
+    const decrementPage = useCallback(() => {
+        console.log('decrement')
         if (pageNumber > 1) {
             history.push(url.CURRENCIES + (pageNumber - 1));
         }
-    };
+    }, [pageNumber, quantityOfPages, history]);
 
-    const incrementPage = () => {
-        if (pageNumber < state.quantityOfPages) {
+    const incrementPage = useCallback(() => {
+        console.log('icrement')
+        if (pageNumber < quantityOfPages) {
             history.push(url.CURRENCIES + (pageNumber + 1));
         }
-    };
+    }, [pageNumber, quantityOfPages, history]);
 
     useEffect(() => {
-        let { quantityElementsOnPage, quantityOfPages } = state;
-
+        console.log('tutaj jestem')
         setState({
             ...state,
             quantityOfPages:
@@ -105,9 +102,9 @@ const PaginationService: React.FC<PaginationServiceProps> = ({
     }, [pageNumber]);
 
     return render({
-        activePage: state.activePage,
+        activePage: activePage,
         currencies: getPartOfCurrencies(),
-        quantityOfPages: state.quantityOfPages === 0 ? 1 : state.quantityOfPages,
+        quantityOfPages: quantityOfPages === 0 ? 1 : quantityOfPages,
         decrementPage,
         incrementPage,
         handleClick,
@@ -115,4 +112,4 @@ const PaginationService: React.FC<PaginationServiceProps> = ({
     });
 };
 
-export default withRouter(PaginationService);
+export default React.memo(PaginationService);

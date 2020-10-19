@@ -8,18 +8,16 @@ import {
   Switch,
   Route,
   Redirect,
-  withRouter,
-  RouteComponentProps
 } from "react-router-dom";
 import { url } from "./common/URL";
 import PaginationServices from "./components/services/PaginationService";
 import DataController from "./components/ui/DataController";
 import { texts } from "./common/texts";
 
-export interface AppProps extends RouteComponentProps, CurrenciesData { }
+export interface AppProps extends CurrenciesData { }
 
 const App: React.FC<AppProps> = props => {
-  let { filterCurrencies, isError } = props;
+  const { filterCurrencies, isError } = props;
 
   const refreshPage = (): void => {
     window.location.reload(false);
@@ -78,4 +76,4 @@ const App: React.FC<AppProps> = props => {
   );
 };
 
-export default withRouter(App);
+export default App;

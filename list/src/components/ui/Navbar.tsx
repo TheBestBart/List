@@ -1,25 +1,23 @@
-import React from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import React, { useMemo } from "react";
+import { useLocation, useHistory } from "react-router-dom";
 import { LocationDescriptor } from "history";
 import { url } from "../../common/URL";
 import { texts } from "../../common/texts";
 import { NavbarReturnerData } from "../services/NavbarService";
 import HamburgerMenu from "react-hamburger-menu";
 
-export interface NavbarProps extends RouteComponentProps, NavbarReturnerData {
+export interface NavbarProps extends NavbarReturnerData {
     handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-    history,
     handleChange,
     toggleClick,
     isOpen,
-    location
 }) => {
-    const redirect = (path: LocationDescriptor<unknown>): void => {
-        history.push(path);
-    };
+    const location = useLocation();
+    const history = useHistory();
+    const redirect = useMemo(() => (path: LocationDescriptor<unknown>): void => history.push(path), []);
 
     return (
         <div className="nav-element-box">
@@ -59,4 +57,4 @@ const Navbar: React.FC<NavbarProps> = ({
     );
 };
 
-export default withRouter(Navbar);
+export default React.memo(Navbar);
